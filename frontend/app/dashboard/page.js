@@ -9,7 +9,7 @@ import Leaderboard from '@/components/Leaderboard';
 import RatingsSection from '@/components/RatingsSection';
 import Quiz from '@/components/Quiz';
 
-export default function DashboardPage({ hideQuizButton = false }) {
+export default function DashboardPage() {
     const [username, setUsername] = useState('');
     const [orders, setOrders] = useState([]);
     const [leaderboard, setLeaderboard] = useState([]);
