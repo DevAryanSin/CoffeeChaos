@@ -14,60 +14,27 @@ const allowedOrigins = [
 ].filter(Boolean); // Remove undefined values
 
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl, or same-origin)
-        if (!origin) return callback(null, true);
-
-        // Check if origin is in allowed list or is a Netlify deploy preview
-        if (allowedOrigins.includes(origin) || origin.includes('.netlify.app')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true
+    origin: true, // Allow all origins (adjust as needed for production)
+    credentials: true // Enable credentials such as cookies
 }));
 app.use(express.json());
 
-// MongoDB Connection with serverless optimization
-let isConnected = false;
-
-const connectDB = async () => {
-    if (isConnected && mongoose.connection.readyState === 1) {
-        console.log('Using existing MongoDB connection');
-        return;
-    }
-
-    try {
-        const options = {
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-            socketTimeoutMS: 45000,
-            maxPoolSize: 10, // Maintain up to 10 socket connections
-            minPoolSize: 1,  // Maintain at least 1 socket connection
-        };
-
-        await mongoose.connect(process.env.MONGODB_URI, options);
-        isConnected = true;
-        console.log('Connected to MongoDB');
-    } catch (err) {
-        console.error('MongoDB connection error:', err);
-        isConnected = false;
-        throw err;
-    }
-};
-
 // MongoDB Connection Middleware
 app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (err) {
-        console.error('Database connection failed:', err);
-        return res.status(503).json({
-            error: 'Database temporarily unavailable',
-            message: 'Please try again in a moment'
-        });
+    if (mongoose.connection.readyState === 0) {
+        try {
+            await mongoose.connect(process.env.MONGODB_URI, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                serverSelectionTimeoutMS: 5000,
+            });
+            console.log('✅ Connected to MongoDB');
+        } catch (err) {
+            console.error('❌ MongoDB connection error:', err);
+            return res.status(500).json({ error: 'Database connection failed' });
+        }
     }
+    next();
 });
 
 
