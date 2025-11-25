@@ -29,10 +29,10 @@ export default function IngredientsPuzzle({ onComplete }) {
             sortedSelected.every((value, index) => value === sortedCorrect[index]);
 
         if (isSame) {
-            setMessage("✅ Correct! You brewed a Latte and calmed Brewster down.");
+            setMessage("Correct!");
             if (onComplete) setTimeout(() => onComplete(true), 1500);
         } else {
-            setMessage("❌ That’s not a Latte. The city is still in danger!");
+            setMessage("That’s not a Latte.");
             if (onComplete) setTimeout(() => onComplete(false), 1500);
         }
     }
@@ -44,40 +44,29 @@ export default function IngredientsPuzzle({ onComplete }) {
 
     return (
         <div>
-            <h2 style={{ fontSize: "18px", marginBottom: "6px" }}>
+            <h2 className="text-xl font-bold text-coffee-900 mb-2">
                 Puzzle: Build the Latte
             </h2>
-            <p style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "10px" }}>
-                Select the correct ingredients to make a <b>Latte</b>.
+            <p className="text-sm text-coffee-700 mb-3">
+                Select the correct ingredients to make a <span className="font-bold">Latte</span>.
             </p>
 
-            <p style={{ fontSize: "13px", marginBottom: "8px" }}>
-                Selected: {selected.join(", ") || "None"}
+            <p className="text-sm font-semibold text-coffee-800 mb-4 bg-coffee-100 px-3 py-2 rounded">
+                Selected: {selected.length > 0 ? selected.join(", ") : "None"}
             </p>
 
-            <div
-                style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "8px",
-                    marginBottom: "14px",
-                }}
-            >
+            <div className="flex flex-wrap gap-2 mb-4">
                 {allIngredients.map((ingredient) => {
                     const isSelected = selected.includes(ingredient);
                     return (
                         <button
                             key={ingredient}
                             onClick={() => toggleIngredient(ingredient)}
-                            style={{
-                                padding: "6px 10px",
-                                borderRadius: "999px",
-                                border: "1px solid #6b7280",
-                                background: isSelected ? "#22c55e" : "transparent",
-                                color: isSelected ? "black" : "white",
-                                cursor: "pointer",
-                                fontSize: "13px",
-                            }}
+                            className={`px-4 py-2 rounded-full font-semibold text-sm transition-all duration-150 ${
+                                isSelected
+                                    ? 'bg-coffee-600 text-white border-2 border-coffee-700 shadow-md'
+                                    : 'bg-coffee-200 text-coffee-900 border-2 border-coffee-400 hover:bg-coffee-300'
+                            }`}
                         >
                             {ingredient}
                         </button>
@@ -85,46 +74,23 @@ export default function IngredientsPuzzle({ onComplete }) {
                 })}
             </div>
 
-            <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+            <div className="flex gap-3 mb-3">
                 <button
                     onClick={checkAnswer}
-                    style={{
-                        flex: 1,
-                        padding: "8px",
-                        borderRadius: "8px",
-                        border: "none",
-                        background: "#22c55e",
-                        color: "black",
-                        cursor: "pointer",
-                        fontWeight: "600",
-                        fontSize: "14px",
-                    }}
+                    className="flex-1 bg-coffee-700 hover:bg-coffee-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-150"
                 >
                     Brew!
                 </button>
                 <button
                     onClick={reset}
-                    style={{
-                        padding: "8px",
-                        borderRadius: "8px",
-                        border: "1px solid #6b7280",
-                        background: "transparent",
-                        color: "white",
-                        cursor: "pointer",
-                        fontSize: "13px",
-                    }}
+                    className="bg-coffee-200 hover:bg-coffee-300 text-coffee-900 font-semibold py-2 px-4 rounded-lg border-2 border-coffee-400 transition-colors duration-150"
                 >
                     Reset
                 </button>
             </div>
 
             {message && (
-                <p
-                    style={{
-                        fontSize: "13px",
-                        marginTop: "4px",
-                    }}
-                >
+                <p className="text-sm font-semibold text-coffee-900 text-center mt-3">
                     {message}
                 </p>
             )}

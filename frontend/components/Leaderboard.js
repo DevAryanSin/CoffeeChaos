@@ -12,7 +12,7 @@ export default function Leaderboard({ leaderboard }) {
 
     return (
         <div className="card">
-            <h2 className="text-2xl font-bold text-coffee-900 mb-4">🏆 Leaderboard</h2>
+            <h2 className="text-2xl font-bold text-coffee-900 mb-4">Leaderboard</h2>
             <div className="space-y-2">
                 {leaderboard.map((entry, index) => (
                     <div

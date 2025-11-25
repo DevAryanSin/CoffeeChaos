@@ -7,7 +7,7 @@ const COFFEE_TYPES = ['Espresso', 'Latte', 'Cappuccino', 'Americano', 'Mocha', '
 const SUGAR_OPTIONS = ['None', 'Light', 'Medium', 'Extra'];
 const SIZE_OPTIONS = ['Small', 'Medium', 'Large'];
 
-export default function OrderForm({ username, onOrderPlaced }) {
+export default function OrderForm({ username, onOrderPlaced, onUsernameChange }) {
     const [formData, setFormData] = useState({
         coffeeType: 'Latte',
         sugar: 'Medium',
@@ -41,7 +41,7 @@ export default function OrderForm({ username, onOrderPlaced }) {
             });
 
             if (response.data.success) {
-                setMessage('✅ Order placed successfully!');
+                setMessage('Order placed successfully!');
                 // Reset form
                 setFormData({
                     coffeeType: 'Latte',
@@ -61,6 +61,20 @@ export default function OrderForm({ username, onOrderPlaced }) {
     return (
         <div className="card">
             <h2 className="text-2xl font-bold text-coffee-900 mb-4">Place New Order</h2>
+
+            <div className="mb-4">
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+                    Your Name:
+                </label>
+                <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => onUsernameChange?.(e.target.value)}
+                    placeholder="Enter your name"
+                    className="input-field w-full"
+                />
+            </div>
 
             {message && (
                 <div className={`px-4 py-3 rounded mb-4 ${message.includes('✅')

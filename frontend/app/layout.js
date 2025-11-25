@@ -1,7 +1,7 @@
 import './globals.css'
 
 export const metadata = {
-    title: 'Brewster Buster - Coffee Ordering',
+    title: 'Coffee Chaos',
     description: 'Order your favorite coffee with Brewster Buster',
 }
 

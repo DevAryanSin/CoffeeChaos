@@ -3,81 +3,74 @@
 
 import { useState } from "react";
 
-// Import each quiz/puzzle component
 import IngredientsPuzzle from "./quizzes/Ingredients";
 import CoffeeTypeQuiz from "./quizzes/Type";
 
 const QUIZZES = [IngredientsPuzzle, CoffeeTypeQuiz];
 
 export default function Quiz({ onExit, onComplete, mode = 'training' }) {
-    // Pick a random quiz ONLY once (on first render)
-    const [index] = useState(() => {
-        const randomIndex = Math.floor(Math.random() * QUIZZES.length);
-        return randomIndex;
-    });
+    const [currentQuizIndex, setCurrentQuizIndex] = useState(
+        mode === 'verification' ? 0 : Math.floor(Math.random() * QUIZZES.length)
+    );
+    const [verificationsPassed, setVerificationsPassed] = useState(0);
 
-    const SelectedQuiz = QUIZZES[index];
+    const SelectedQuiz = QUIZZES[currentQuizIndex];
+
+    const handleQuizComplete = (success) => {
+        if (mode === 'training') {
+            onComplete(success);
+        } else if (mode === 'verification') {
+            if (success) {
+                const newPassCount = verificationsPassed + 1;
+                setVerificationsPassed(newPassCount);
+
+                if (newPassCount === QUIZZES.length) {
+                    onComplete(true);
+                } else {
+                    setCurrentQuizIndex((newPassCount) % QUIZZES.length);
+                }
+            } else {
+                onComplete(false);
+            }
+        }
+    };
 
     return (
         <div
+            className="w-full bg-gradient-to-br from-coffee-100 to-coffee-200 rounded-lg border-4 border-coffee-600 shadow-2xl overflow-hidden"
             style={{
-                minHeight: "100vh",
-                background: "#111827",
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontFamily: "system-ui, sans-serif",
-                position: "relative",
+                padding: "24px",
             }}
         >
             {mode !== 'verification' && (
                 <button
                     onClick={onExit}
-                    style={{
-                        position: "absolute",
-                        top: "20px",
-                        right: "20px",
-                        padding: "8px 16px",
-                        background: "#ef4444",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "8px",
-                        cursor: "pointer",
-                        fontWeight: "bold",
-                    }}
+                    className="absolute top-4 right-4 bg-coffee-700 hover:bg-coffee-800 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200"
                 >
-                    Exit Training
+                    ✕ Exit
                 </button>
             )}
 
-            <div
-                style={{
-                    width: "100%",
-                    maxWidth: "460px",
-                    padding: "20px",
-                    borderRadius: "16px",
-                    border: "1px solid #4b5563",
-                    background: "#020617",
-                }}
-            >
-                <h1 style={{ fontSize: "24px", marginBottom: "8px" }}>
-                    Operation Caffeine Chaos – {mode === 'verification' ? 'Verification' : 'Training'}
+            <div className="text-center mb-6">
+                <h1 className="text-3xl font-bold text-coffee-900 mb-2">
+                    Operation Coffee Chaos
                 </h1>
-                <p
-                    style={{
-                        fontSize: "14px",
-                        color: "#9ca3af",
-                        marginBottom: "12px",
-                    }}
-                >
-                    {mode === 'verification'
-                        ? "Brewster needs to know if you're a true coffee lover. Solve this puzzle to enter."
-                        : "Brewster is testing you. Solve this random coffee puzzle to prove your skills."}
+                <p className="text-sm font-semibold text-coffee-700 bg-coffee-300 inline-block px-3 py-1 rounded-full">
+                    {mode === 'verification' 
+                        ? `Verification (${verificationsPassed + 1}/${QUIZZES.length})` 
+                        : 'Training Mode'}
                 </p>
+            </div>
 
-                {/* This renders one of the quiz components */}
-                <SelectedQuiz onComplete={onComplete} />
+            <p className="text-center text-coffee-800 text-sm mb-6 italic">
+                {mode === 'verification'
+                    ? `Brewster needs to know if you're a true coffee lover. Solve ${QUIZZES.length} quizzes to enter the cafe! (Quiz ${verificationsPassed + 1}/${QUIZZES.length})`
+                    : "Brewster is testing you. Solve this random coffee puzzle to prove your skills."}
+            </p>
+
+            {/* This renders one of the quiz components */}
+            <div className="bg-white rounded-lg p-6 border-2 border-coffee-400">
+                <SelectedQuiz onComplete={handleQuizComplete} />
             </div>
         </div>
     );

@@ -18,12 +18,12 @@ export default function RatingsSection({ username, orders, ratings, onRatingSubm
         e.preventDefault();
 
         if (!username) {
-            setMessage('❌ Please enter your name first');
+            setMessage('Please enter your name first');
             return;
         }
 
         if (!selectedOrder) {
-            setMessage('❌ Please select an order to rate');
+            setMessage('Please select an order to rate');
             return;
         }
 
@@ -39,7 +39,7 @@ export default function RatingsSection({ username, orders, ratings, onRatingSubm
             });
 
             if (response.data.success) {
-                setMessage('✅ Rating submitted successfully!');
+                setMessage('Rating submitted successfully!');
                 setSelectedOrder('');
                 setRating(5);
                 setComment('');
@@ -54,7 +54,7 @@ export default function RatingsSection({ username, orders, ratings, onRatingSubm
 
     return (
         <div className="card">
-            <h2 className="text-2xl font-bold text-coffee-900 mb-4">⭐ Rate Your Orders</h2>
+            <h2 className="text-2xl font-bold text-coffee-900 mb-4">Rate Your Orders</h2>
 
             {message && (
                 <div className={`px-4 py-3 rounded mb-4 ${message.includes('✅')

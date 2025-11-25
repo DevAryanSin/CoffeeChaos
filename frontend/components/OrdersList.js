@@ -5,7 +5,7 @@ export default function OrdersList({ orders }) {
         return (
             <div className="card">
                 <h2 className="text-2xl font-bold text-coffee-900 mb-4">Your Orders</h2>
-                <p className="text-gray-600">No orders yet. Place your first order!</p>
+                <p className="text-gray-600">Place your first order!</p>
             </div>
         );
     }

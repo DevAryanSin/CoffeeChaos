@@ -24,10 +24,10 @@ export default function CoffeeTypeQuiz({ onComplete }) {
 
     function handleClick(option) {
         if (option === current.answer) {
-            setMessage("✅ Correct! You passed this caffeine check.");
+            setMessage("Correct!");
             if (onComplete) setTimeout(() => onComplete(true), 1500);
         } else {
-            setMessage("❌ Wrong answer. Brewster is not amused.");
+            setMessage("Wrong answer!");
             if (onComplete) setTimeout(() => onComplete(false), 1500);
         }
     }
@@ -40,46 +40,23 @@ export default function CoffeeTypeQuiz({ onComplete }) {
 
     return (
         <div>
-            <h2 style={{ fontSize: "18px", marginBottom: "6px" }}>
+            <h2 className="text-xl font-bold text-coffee-900 mb-2">
                 Quiz: Name That Coffee
             </h2>
-            <p style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "10px" }}>
+            <p className="text-sm text-coffee-700 mb-4">
                 Read the recipe and choose the correct coffee type.
             </p>
 
-            <div
-                style={{
-                    borderRadius: "10px",
-                    border: "1px solid #4b5563",
-                    padding: "10px",
-                    marginBottom: "14px",
-                    fontSize: "14px",
-                }}
-            >
+            <div className="bg-coffee-50 border-2 border-coffee-400 rounded-lg p-4 mb-4 text-coffee-900 font-medium">
                 {current.text}
             </div>
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "8px",
-                    marginBottom: "10px",
-                }}
-            >
+            <div className="grid grid-cols-2 gap-3 mb-4">
                 {current.options.map((option) => (
                     <button
                         key={option}
                         onClick={() => handleClick(option)}
-                        style={{
-                            padding: "8px",
-                            borderRadius: "8px",
-                            border: "1px solid #6b7280",
-                            background: "transparent",
-                            color: "white",
-                            cursor: "pointer",
-                            fontSize: "14px",
-                        }}
+                        className="bg-coffee-600 hover:bg-coffee-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-150 text-sm"
                     >
                         {option}
                     </button>
@@ -87,26 +64,14 @@ export default function CoffeeTypeQuiz({ onComplete }) {
             </div>
 
             {message && (
-                <p
-                    style={{
-                        fontSize: "13px",
-                        marginBottom: "8px",
-                    }}
-                >
+                <p className="text-sm font-semibold text-coffee-900 mb-3 text-center">
                     {message}
                 </p>
             )}
 
             <button
                 onClick={nextQuestion}
-                style={{
-                    fontSize: "12px",
-                    textDecoration: "underline",
-                    background: "transparent",
-                    border: "none",
-                    color: "#9ca3af",
-                    cursor: "pointer",
-                }}
+                className="text-coffee-700 hover:text-coffee-900 font-semibold text-sm underline cursor-pointer transition-colors duration-150"
             >
                 Next recipe →
             </button>
