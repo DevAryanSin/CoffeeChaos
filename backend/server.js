@@ -7,14 +7,24 @@ const mongoose = require('mongoose');
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true
 }));
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('MongoDB connection error:', err));
+// MongoDB Connection Middleware
+app.use(async (req, res, next) => {
+    if (mongoose.connection.readyState === 0) {
+        try {
+            await mongoose.connect(process.env.MONGODB_URI);
+            console.log('Connected to MongoDB');
+        } catch (err) {
+            console.error('MongoDB connection error:', err);
+            return res.status(500).json({ error: 'Database connection failed' });
+        }
+    }
+    next();
+});
 
 
 const User = mongoose.model('User', {
@@ -116,7 +126,11 @@ app.get('/api/ratings/:username', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Coffee ready!`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+        console.log(`Coffee ready!`);
+    });
+}
+
+module.exports = app;

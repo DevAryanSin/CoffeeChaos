@@ -1,0 +1,12 @@
+[build]
+  command = "cd backend && npm install && cd ../frontend && npm install && npm run build"
+  publish = "frontend/.next"
+
+[functions]
+  directory = "backend/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
