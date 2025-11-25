@@ -155,6 +155,31 @@ This project is great for learning:
 
 Perfect for beginners! 🎓
 
+## Deployment
+
+### Deploy to Netlify
+
+This app is ready to deploy to Netlify! The backend runs as serverless functions.
+
+**Quick Deploy:**
+1. Push your code to GitHub
+2. Connect to Netlify
+3. Set environment variables (MongoDB URI, Frontend URL)
+4. Deploy!
+
+**📚 Detailed Guides:**
+- [Full Deployment Guide](./DEPLOYMENT.md) - Complete step-by-step instructions
+- [Quick Checklist](./DEPLOYMENT_CHECKLIST.md) - Fast reference
+- [Fixes Summary](./FIXES_SUMMARY.md) - How the deployment works
+
+**Key Features:**
+- ✅ Automatic environment detection (local vs production)
+- ✅ No code changes needed between environments
+- ✅ Works with Netlify deploy previews
+- ✅ CORS properly configured for production
+
+
+
 ## Troubleshooting
 
 **MongoDB not connecting?**

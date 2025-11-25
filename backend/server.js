@@ -6,8 +6,25 @@ const mongoose = require('mongoose');
 
 const app = express();
 
+// CORS configuration for both local and production
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5000',
+    process.env.FRONTEND_URL
+].filter(Boolean); // Remove undefined values
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, or same-origin)
+        if (!origin) return callback(null, true);
+
+        // Check if origin is in allowed list or is a Netlify deploy preview
+        if (allowedOrigins.includes(origin) || origin.includes('.netlify.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(express.json());

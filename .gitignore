@@ -35,3 +35,7 @@ dist/
 # Testing
 coverage/
 .nyc_output/
+
+# Netlify
+.netlify/
+
