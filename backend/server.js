@@ -29,20 +29,37 @@ async function connectToDatabase() {
         return cachedDb;
     }
 
+    // Validate MONGODB_URI exists
+    if (!process.env.MONGODB_URI) {
+        const error = new Error('MONGODB_URI environment variable is not set');
+        console.error('❌ Configuration Error:', error.message);
+        console.error('Available env vars:', Object.keys(process.env).filter(k => !k.includes('SECRET')));
+        throw error;
+    }
+
     try {
+        console.log('🔄 Connecting to MongoDB...');
+        console.log('MongoDB URI exists:', !!process.env.MONGODB_URI);
+        console.log('MongoDB URI starts with:', process.env.MONGODB_URI.substring(0, 20) + '...');
+
         await mongoose.connect(process.env.MONGODB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000,
+            serverSelectionTimeoutMS: 10000, // Increased timeout for Netlify
             // Optimize for serverless
             maxPoolSize: 10,
             minPoolSize: 1,
         });
         cachedDb = mongoose.connection;
-        console.log('✅ Connected to MongoDB');
+        console.log('✅ Connected to MongoDB successfully');
         return cachedDb;
     } catch (err) {
-        console.error('❌ MongoDB connection error:', err);
+        console.error('❌ MongoDB connection error:', err.message);
+        console.error('Error details:', {
+            name: err.name,
+            code: err.code,
+            codeName: err.codeName
+        });
         throw err;
     }
 }
