@@ -9,13 +9,14 @@
   directory = "backend/functions"
   node_bundler = "esbuild"
 
+# API routes - redirect to serverless function
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
   force = true
 
-# Redirect all other routes to index.html for client-side routing
+# SPA fallback - redirect all other routes to index.html for client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"

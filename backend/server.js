@@ -19,23 +19,34 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// MongoDB Connection Middleware
-app.use(async (req, res, next) => {
-    if (mongoose.connection.readyState === 0) {
-        try {
-            await mongoose.connect(process.env.MONGODB_URI, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
-                serverSelectionTimeoutMS: 5000,
-            });
-            console.log('✅ Connected to MongoDB');
-        } catch (err) {
-            console.error('❌ MongoDB connection error:', err);
-            return res.status(500).json({ error: 'Database connection failed' });
-        }
+// MongoDB Connection - Optimized for Serverless
+// Cache the connection to reuse across function invocations
+let cachedDb = null;
+
+async function connectToDatabase() {
+    if (cachedDb && mongoose.connection.readyState === 1) {
+        console.log('✅ Using cached MongoDB connection');
+        return cachedDb;
     }
-    next();
-});
+
+    try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000,
+            // Optimize for serverless
+            maxPoolSize: 10,
+            minPoolSize: 1,
+        });
+        cachedDb = mongoose.connection;
+        console.log('✅ Connected to MongoDB');
+        return cachedDb;
+    } catch (err) {
+        console.error('❌ MongoDB connection error:', err);
+        throw err;
+    }
+}
+
 
 
 const User = mongoose.model('User', {
@@ -66,6 +77,8 @@ app.get('/api/health', (req, res) => {
 
 app.post('/api/orders', async (req, res) => {
     try {
+        await connectToDatabase();
+
         const { username, coffeeType, sugar, size } = req.body;
 
         const order = new Order({ username, coffeeType, sugar, size });
@@ -86,6 +99,8 @@ app.post('/api/orders', async (req, res) => {
 
 app.get('/api/orders/:username', async (req, res) => {
     try {
+        await connectToDatabase();
+
         const orders = await Order.find({ username: req.params.username })
             .sort({ createdAt: -1 });
         res.json({ success: true, orders });
@@ -96,6 +111,8 @@ app.get('/api/orders/:username', async (req, res) => {
 
 app.get('/api/leaderboard', async (req, res) => {
     try {
+        await connectToDatabase();
+
         const topUsers = await User.find()
             .sort({ totalCups: -1 })
             .limit(10);
@@ -114,6 +131,8 @@ app.get('/api/leaderboard', async (req, res) => {
 
 app.post('/api/ratings', async (req, res) => {
     try {
+        await connectToDatabase();
+
         const { username, orderId, rating, comment } = req.body;
 
         const newRating = new Rating({ username, orderId, rating, comment });
@@ -127,6 +146,8 @@ app.post('/api/ratings', async (req, res) => {
 
 app.get('/api/ratings/:username', async (req, res) => {
     try {
+        await connectToDatabase();
+
         const ratings = await Rating.find({ username: req.params.username })
             .sort({ createdAt: -1 });
         res.json({ success: true, ratings });
