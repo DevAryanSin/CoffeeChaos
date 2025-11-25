@@ -1,6 +1,6 @@
 [build]
   command = "cd backend && npm install && cd ../frontend && npm install && npm run build"
-  publish = "frontend/.next"
+  publish = "frontend/out"
 
 [functions]
   directory = "backend/functions"
