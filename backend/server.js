@@ -29,18 +29,45 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// MongoDB Connection with serverless optimization
+let isConnected = false;
+
+const connectDB = async () => {
+    if (isConnected && mongoose.connection.readyState === 1) {
+        console.log('Using existing MongoDB connection');
+        return;
+    }
+
+    try {
+        const options = {
+            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+            socketTimeoutMS: 45000,
+            maxPoolSize: 10, // Maintain up to 10 socket connections
+            minPoolSize: 1,  // Maintain at least 1 socket connection
+        };
+
+        await mongoose.connect(process.env.MONGODB_URI, options);
+        isConnected = true;
+        console.log('Connected to MongoDB');
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        isConnected = false;
+        throw err;
+    }
+};
+
 // MongoDB Connection Middleware
 app.use(async (req, res, next) => {
-    if (mongoose.connection.readyState === 0) {
-        try {
-            await mongoose.connect(process.env.MONGODB_URI);
-            console.log('Connected to MongoDB');
-        } catch (err) {
-            console.error('MongoDB connection error:', err);
-            return res.status(500).json({ error: 'Database connection failed' });
-        }
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error('Database connection failed:', err);
+        return res.status(503).json({
+            error: 'Database temporarily unavailable',
+            message: 'Please try again in a moment'
+        });
     }
-    next();
 });
 
 
