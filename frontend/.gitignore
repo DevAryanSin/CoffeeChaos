@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+generate_doc.py
+
+
 # production
 /build
 

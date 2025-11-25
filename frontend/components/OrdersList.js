@@ -28,14 +28,6 @@ export default function OrdersList({ orders }) {
                                     Size: {order.size} | Sugar: {order.sugar}
                                 </p>
                             </div>
-                            <div className="text-right">
-                                <p className="text-xs text-gray-500">
-                                    {new Date(order.createdAt).toLocaleDateString()}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                    {new Date(order.createdAt).toLocaleTimeString()}
-                                </p>
-                            </div>
                         </div>
                     </div>
                 ))}

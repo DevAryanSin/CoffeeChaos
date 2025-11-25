@@ -6,7 +6,6 @@ import axiosInstance from '@/lib/axios';
 export default function RatingsSection({ username, orders, ratings, onRatingSubmitted }) {
     const [selectedOrder, setSelectedOrder] = useState('');
     const [rating, setRating] = useState(5);
-    const [comment, setComment] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
@@ -35,14 +34,12 @@ export default function RatingsSection({ username, orders, ratings, onRatingSubm
                 username,
                 orderId: selectedOrder,
                 rating: parseInt(rating),
-                comment,
             });
 
             if (response.data.success) {
                 setMessage('Rating submitted successfully!');
                 setSelectedOrder('');
                 setRating(5);
-                setComment('');
                 if (onRatingSubmitted) onRatingSubmitted();
             }
         } catch (error) {
@@ -109,24 +106,9 @@ export default function RatingsSection({ username, orders, ratings, onRatingSubm
                         </div>
                     </div>
 
-                    <div>
-                        <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
-                            Comment (optional)
-                        </label>
-                        <textarea
-                            id="comment"
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            className="input-field"
-                            rows="3"
-                            placeholder="Share your thoughts about this order..."
-                            maxLength={500}
-                        />
-                    </div>
-
                     <button
                         type="submit"
-                        disabled={loading || !username}
+                        disabled={loading}
                         className="btn-primary w-full disabled:opacity-50"
                     >
                         {loading ? 'Submitting...' : 'Submit Rating'}
@@ -154,9 +136,7 @@ export default function RatingsSection({ username, orders, ratings, onRatingSubm
                                         {'⭐'.repeat(ratingItem.rating)}
                                     </div>
                                 </div>
-                                {ratingItem.comment && (
-                                    <p className="text-sm text-gray-700 italic">"{ratingItem.comment}"</p>
-                                )}
+
                             </div>
                         ))}
                     </div>

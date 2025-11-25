@@ -26,11 +26,6 @@ export default function OrderForm({ username, onOrderPlaced, onUsernameChange })
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!username) {
-            setMessage('❌ Please enter your name first!');
-            return;
-        }
-
         setLoading(true);
         setMessage('');
 
@@ -139,10 +134,10 @@ export default function OrderForm({ username, onOrderPlaced, onUsernameChange })
 
                 <button
                     type="submit"
-                    disabled={loading || !username}
+                    disabled={loading}
                     className="btn-primary w-full disabled:opacity-50"
                 >
-                    {loading ? 'Placing Order...' : '☕ Place Order'}
+                    {loading ? 'Placing Order...' : 'Place Order'}
                 </button>
             </form>
         </div>
