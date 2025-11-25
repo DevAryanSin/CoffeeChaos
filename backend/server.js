@@ -6,21 +6,18 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-// CORS configuration for both local and production
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:5000',
     process.env.FRONTEND_URL
-].filter(Boolean); // Remove undefined values
+].filter(Boolean); 
 
 app.use(cors({
-    origin: true, // Allow all origins (adjust as needed for production)
-    credentials: true // Enable credentials such as cookies
+    origin: true, 
+    credentials: true
 }));
 app.use(express.json());
 
-// MongoDB Connection - Optimized for Serverless
-// Cache the connection to reuse across function invocations
 let cachedDb = null;
 
 async function connectToDatabase() {
@@ -29,7 +26,6 @@ async function connectToDatabase() {
         return cachedDb;
     }
 
-    // Validate MONGODB_URI exists
     if (!process.env.MONGODB_URI) {
         const error = new Error('MONGODB_URI environment variable is not set');
         console.error('❌ Configuration Error:', error.message);
@@ -45,8 +41,7 @@ async function connectToDatabase() {
         await mongoose.connect(process.env.MONGODB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 10000, // Increased timeout for Netlify
-            // Optimize for serverless
+            serverSelectionTimeoutMS: 10000, 
             maxPoolSize: 10,
             minPoolSize: 1,
         });
